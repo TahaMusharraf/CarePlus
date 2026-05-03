@@ -251,7 +251,7 @@
         <tr><th>Table</th><th>Description</th><th>Relationship</th></tr>
         <tr><td>users</td><td>Base user table for all roles</td><td>1-to-1 with doctors, patients, admin</td></tr>
         <tr><td>admin</td><td>Admin specific data</td><td>1-to-1 with users</td></tr>
-        <tr><td>departments</td><td>Hospital departments</td><td>Many-to-Many with doctors</td></tr>
+        <tr><td>departments</td><td>Hospital departments</td><td>1-to-Many with doctors</td></tr>
         <tr><td>doctors</td><td>Doctor specific data</td><td>1-to-1 with users</td></tr>
         <tr><td>patients</td><td>Patient specific data</td><td>1-to-1 with users</td></tr>
         <tr><td>appointments</td><td>Patient-Doctor appointments</td><td>Many-to-1 with patients & doctors</td></tr>
