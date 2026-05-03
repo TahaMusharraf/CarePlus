@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "ignoreDeprecations": "6.0",
+    "jsx": "react-jsx",
+    "lib": ["DOM", "ESNext"],
+    "types": ["react", "react-dom"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  }
+}
