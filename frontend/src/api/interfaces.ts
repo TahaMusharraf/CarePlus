@@ -49,8 +49,8 @@ interface Appointment {
   appointmentDateTime: string;
   status: string;
   reason: string;
-  patient_id: number;
-  doctor_id: number;
+  patientId: number;
+  doctorId: number;
 }
 
 interface RecordForm {

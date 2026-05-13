@@ -57,6 +57,8 @@ export default function DoctorAppointments() {
   }, []);
 
   useEffect(() => {
+            console.log(appointments)
+
     let data = appointments;
     if (statusFilter !== 'all') data = data.filter(a => a.status?.toLowerCase() === statusFilter);
     const q = search.toLowerCase();
@@ -73,11 +75,11 @@ export default function DoctorAppointments() {
   const toggleAll = () =>
     setSelected(selected.length === filtered.length ? [] : filtered.map(a => a.appointmentId));
 
-  const openRecordModal = (appt: Appointment) => {
+  const openRecordModal = (apptId: number, patId: number) => {
     setRecordModal({
-      patientId:     appt.patient_id,
-      patientName:   appt.patientName || `Patient #${appt.patient_id}`,
-      appointmentId: appt.appointmentId,
+      patientId:     patId,
+      recordId:      0,
+      appointmentId: apptId,
       doctorId:      doctorId!,
       diagnosis:     '',
       prescription:  '',
@@ -108,6 +110,7 @@ export default function DoctorAppointments() {
     if (!recordModal) return;
     setSaving(true);
     try {
+      console.log("MODAL: ",recordModal)
       await apiCall('POST', '/medical-records/create', {
         patientId:     recordModal.patientId,
         doctorId:      recordModal.doctorId,
@@ -201,7 +204,7 @@ export default function DoctorAppointments() {
                   <button className="btn btn-ghost btn-sm" onClick={() => openStatusModal(a)}>
                     <EditIcon size={15}/>
                   </button>
-                  <button className="btn btn-ghost btn-sm" onClick={() => openRecordModal(a)} title="Create Medical Record">
+                  <button className="btn btn-ghost btn-sm" onClick={() => openRecordModal(a.appointmentId,a.patientId)} title="Create Medical Record">
                     <PlusIcon size={15} color='blue'/>
                     Create Medical Record
                   </button>
@@ -260,8 +263,8 @@ export default function DoctorAppointments() {
             <div className="modal-form">
               <div className="modal-grid">
                 <div className="form-group">
-                  <label>Patient</label>
-                  <input value={recordModal.patientName} readOnly style={{ opacity: 0.6, cursor: 'not-allowed' }} />
+                  <label>Patient ID</label>
+                  <input value={recordModal.patientId} readOnly style={{ opacity: 0.6, cursor: 'not-allowed' }} />
                 </div>
                 <div className="form-group">
                   <label>Appointment ID</label>

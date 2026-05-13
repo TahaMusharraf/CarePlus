@@ -4,6 +4,7 @@ import { ConfirmModal, Toast } from '../Admin/AdminHelper';
 import { apiCall } from '../../api/axios';
 import { useNavigate } from 'react-router-dom';
 import { DeleteIcon, EditIcon, SearchIcon } from '@/api/icons';
+import { ssrModuleExportsKey } from 'vite/module-runner';
 
 const statusBadge: Record<string, string> = {
   scheduled: 'badge-blue',
@@ -22,7 +23,7 @@ export default function PatientAppointments() {
   const [toast, setToast]               = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
 
   // Cancel state
-  const [confirmId, setConfirmId] = useState<number | null>(null);
+  const [confirmId, setConfirmId] = useState<number[] | null>(null);
   const [deleting, setDeleting]   = useState(false);
 
   // Edit state
@@ -32,7 +33,7 @@ export default function PatientAppointments() {
 
   const today = new Date().toISOString().split('T')[0];
 
-  useEffect(() => {
+  const fetchAppointments = () => {
     const userRaw = localStorage.getItem('user');
     const user    = userRaw ? JSON.parse(userRaw) : null;
     if (!user?.id) return;
@@ -49,7 +50,9 @@ export default function PatientAppointments() {
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => {fetchAppointments(); } ,[])
 
   useEffect(() => {
     let data = appointments;
@@ -111,12 +114,8 @@ const openEdit = (a: any) => {
     if (!confirmId) return;
     setDeleting(true);
     try {
-      await apiCall('DELETE', `/appointments/delete/${confirmId}`);
-      setAppointments(prev =>
-        prev.map(a =>
-          a.appointmentId === confirmId ? { ...a, status: 'cancelled' } : a
-        )
-      );
+      await apiCall('DELETE', '/appointments/delete',confirmId);
+      fetchAppointments()
       setToast({ msg: 'Appointment cancelled successfully', type: 'success' });
     } catch {
       setToast({ msg: 'Could not cancel appointment', type: 'error' });
@@ -227,7 +226,7 @@ const openEdit = (a: any) => {
                     </button>
                     <button
                       className="btn btn-danger btn-sm"
-                      onClick={() => setConfirmId(a.appointmentId)}
+                      onClick={() => setConfirmId([a.appointmentId])}
                     > 
                     <DeleteIcon size={15}/>
                       Cancel
